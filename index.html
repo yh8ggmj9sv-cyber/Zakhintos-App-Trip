@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080f1a">
+<title>Zakynthos · Agosto 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --ink:#080f1a;
+  --ink2:#0d1929;
+  --ink3:#162238;
+  --surface:#1c2e47;
+  --line:rgba(255,255,255,0.07);
+  --t1:#eef2ff;
+  --t2:#8fa8c8;
+  --t3:#4a6580;
+  --sea:#2aa8e0;
+  --sea2:#1d7aaa;
+  --gold:#d4a84b;
+  --gold2:#f0c96a;
+  --jade:#2ec99a;
+  --coral:#e8614a;
+  --violet:#8b72e8;
+  --sand:#e8d5a0;
+  --r:16px;--rs:10px;
+}
+html,body{height:100%;background:var(--ink);color:var(--t1);font-family:'Inter',sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased;}
+
+/* ─── HEADER ─── */
+#hdr{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(8,15,26,0.92);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:0.5px solid var(--line);
+  padding:env(safe-area-inset-top,0) 0 0;
+}
+#hdr-inner{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;}
+#hdr-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--t1);letter-spacing:0.2px;}
+#hdr-sub{font-size:10px;color:var(--t3);margin-top:1px;font-weight:500;letter-spacing:0.3px;}
+#hdr-pill{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:var(--ink);font-size:10px;font-weight:700;
+  padding:4px 10px;border-radius:20px;letter-spacing:0.3px;
+  box-shadow:0 2px 10px rgba(212,168,75,0.28);
+}
+
+/* ─── NAV ─── */
+#nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(8,15,26,0.97);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:0.5px solid var(--line);
+  padding:0 0 env(safe-area-inset-bottom,0);
+  display:flex;
+}
+.nb{
+  flex:1;padding:10px 4px 9px;border:none;background:transparent;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;color:var(--t3);transition:color 0.25s ease;
+}
+.nb.on{color:var(--sea);}
+.nb svg{width:21px;height:21px;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+.nb.on svg{transform:scale(1.1);}
+.nb:active svg{transform:scale(0.88);}
+.nb-label{font-size:10px;font-weight:600;letter-spacing:0.2px;}
+
+/* ─── SCREENS ─── */
+.scr{position:fixed;inset:0;overflow-y:auto;display:none;padding-top:56px;padding-bottom:65px;background:var(--ink);}
+.scr.on{display:block;}
+.scr.enter{opacity:0;transform:translateY(8px);}
+.scr.enter-active{opacity:1;transform:translateY(0);transition:opacity 0.34s ease,transform 0.34s cubic-bezier(0.25,0.8,0.25,1);}
+.scr::-webkit-scrollbar{display:none;}
+#scr-lugares{padding-top:0;}
+
+/* ─── SEARCH + FILTER ─── */
+.top-bar{
+  position:sticky;top:56px;z-index:50;
+  background:rgba(8,15,26,0.97);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:0.5px solid var(--line);
+  padding:10px 16px 0;
+}
+.search-box{
+  display:flex;align-items:center;gap:8px;
+  background:var(--ink3);border:0.5px solid var(--line);
+  border-radius:var(--rs);padding:8px 12px;margin-bottom:10px;
+}
+.search-box svg{width:15px;height:15px;color:var(--t3);flex-shrink:0;}
+.search-box input{background:transparent;border:none;color:var(--t1);font-size:14px;outline:none;flex:1;font-family:'Inter',sans-serif;}
+.search-box input::placeholder{color:var(--t3);}
+.filter-scroll{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px;}
+.filter-scroll::-webkit-scrollbar{display:none;}
+.fchip{
+  flex-shrink:0;padding:5px 13px;border-radius:20px;
+  border:1px solid var(--line);background:transparent;
+  color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;
+  white-space:nowrap;transition:all 0.2s cubic-bezier(0.25,0.8,0.25,1);font-family:'Inter',sans-serif;
+}
+.fchip.on{color:var(--ink);border-color:transparent;}
+.fchip:active{transform:scale(0.94);}
+#places-list{ padding-top:4px; }
+
+/* ─── PLACE CARDS ─── */
+.section-label{
+  padding:16px 18px 6px;
+  font-size:10px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;color:var(--t3);
+}
+.place-card{
+  display:flex;align-items:center;gap:14px;
+  padding:13px 18px;border-bottom:0.5px solid var(--line);
+  cursor:pointer;transition:background 0.15s ease,transform 0.15s cubic-bezier(0.25,0.8,0.25,1);
+  position:relative;
+}
+.place-card:active{background:var(--ink2);transform:scale(0.988);}
+@media (hover:hover){.place-card:hover{background:var(--ink2);}}
+.place-card.pinned::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--gold),transparent);
+}
+.p-icon{
+  width:46px;height:46px;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.p-info{flex:1;min-width:0;}
+.p-name{font-size:14px;font-weight:600;color:var(--t1);line-height:1.3;}
+.p-sub{font-size:12px;color:var(--t2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.p-tags{display:flex;align-items:center;gap:5px;margin-top:5px;flex-wrap:wrap;}
+.p-tag{font-size:10px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;}
+.p-badge{font-size:10px;font-weight:600;color:var(--gold2);display:flex;align-items:center;gap:3px;}
+.p-day-tag{font-size:10px;font-weight:600;color:var(--sea);background:rgba(42,168,224,0.12);padding:2px 7px;border-radius:20px;}
+.p-arrow{color:var(--t3);font-size:20px;flex-shrink:0;}
+
+/* ─── DETAIL SHEET ─── */
+#sheet{position:fixed;inset:0;z-index:200;display:none;pointer-events:none;}
+#sheet.on{display:block;pointer-events:all;}
+#sheet-bg{position:absolute;inset:0;background:rgba(0,0,0,0);}
+#sheet-bg.vis{background:rgba(0,0,0,0.55);transition:background 0.3s;}
+#sheet-panel{
+  position:absolute;bottom:0;left:0;right:0;
+  background:var(--ink2);
+  border-radius:22px 22px 0 0;
+  border-top:0.5px solid var(--line);
+  max-height:90vh;overflow-y:auto;scrollbar-width:none;
+  padding-bottom:env(safe-area-inset-bottom,20px);
+  transform:translateY(100%);
+  transition:transform 0.32s cubic-bezier(0.25,0.8,0.25,1);
+}
+#sheet-panel.vis{transform:translateY(0);}
+#sheet-panel::-webkit-scrollbar{display:none;}
+#sheet-panel.drag-over{outline:2px dashed var(--sea);outline-offset:-6px;}
+#sheet-panel.drag-over::after{
+  content:'📷  Suelta la imagen para añadirla';
+  position:absolute;inset:0;z-index:50;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:0 30px;
+  background:rgba(8,15,26,0.9);
+  color:var(--sea);font-size:14px;font-weight:700;letter-spacing:0.2px;
+  border-radius:22px 22px 0 0;
+  pointer-events:none;
+}
+.sh-handle{width:36px;height:4px;background:rgba(255,255,255,0.12);border-radius:2px;margin:12px auto 0;}
+#sh-close{
+  position:absolute;top:14px;right:16px;
+  width:30px;height:30px;border-radius:50%;
+  background:var(--ink3);border:none;color:var(--t2);
+  font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;z-index:10;
+}
+
+/* SHEET HERO */
+#sh-hero{
+  width:100%;height:200px;object-fit:cover;display:block;
+  background:var(--ink3);
+  opacity:0;transition:opacity 0.45s ease;
+}
+#sh-hero.loaded{opacity:1;}
+#sh-hero-placeholder{
+  width:100%;height:160px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:48px;
+}
+.sh-body{padding:16px 18px 0;}
+#sh-cat-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+#sh-cat-label{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;}
+#sh-day-badge{font-size:10px;font-weight:600;color:var(--sea);background:rgba(42,168,224,0.12);padding:3px 9px;border-radius:20px;}
+#sh-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--t1);line-height:1.25;}
+#sh-desc{font-size:13px;color:var(--t2);margin-top:8px;line-height:1.7;}
+.sh-tip{
+  margin-top:12px;padding:10px 14px;
+  background:rgba(42,168,224,0.08);
+  border-left:2px solid var(--sea);
+  border-radius:0 var(--rs) var(--rs) 0;
+  font-size:12px;color:var(--t2);line-height:1.6;
+}
+.sh-tip strong{color:var(--sea);font-weight:600;}
+
+/* SHEET ACTIONS */
+.sh-actions{display:flex;gap:8px;margin-top:16px;}
+.sh-btn-maps{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
+  padding:12px;background:var(--sea);color:#fff;
+  border-radius:var(--rs);font-size:13px;font-weight:600;
+  text-decoration:none;transition:background 0.15s ease,transform 0.15s cubic-bezier(0.25,0.8,0.25,1);
+}
+.sh-btn-maps:active{background:var(--sea2);transform:scale(0.97);}
+
+/* SHEET SECTIONS */
+.sh-sec{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--t3);margin:20px 18px 10px;display:flex;align-items:baseline;gap:8px;}
+.sh-sec-hint{font-size:10px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--t3);opacity:0.7;}
+
+/* MY PHOTOS */
+#sh-photos{display:flex;gap:8px;padding:0 18px;overflow-x:auto;scrollbar-width:none;}
+#sh-photos::-webkit-scrollbar{display:none;}
+.ph-thumb{width:86px;height:86px;border-radius:11px;object-fit:cover;flex-shrink:0;cursor:pointer;border:1.5px solid rgba(255,255,255,0.06);}
+.ph-add{
+  width:86px;height:86px;border-radius:11px;flex-shrink:0;
+  background:var(--ink3);border:1.5px dashed rgba(255,255,255,0.13);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;cursor:pointer;color:var(--t3);font-size:11px;font-weight:600;
+  transition:border-color 0.15s;
+}
+.ph-add:active{border-color:var(--sea);}
+.ph-add-icon{font-size:26px;line-height:1;}
+
+/* NOTES */
+#sh-notes-ta{
+  margin:0 18px;width:calc(100% - 36px);
+  background:var(--ink3);border:0.5px solid var(--line);
+  border-radius:var(--rs);padding:11px 13px;
+  color:var(--t1);font-size:13px;line-height:1.65;
+  min-height:80px;resize:none;font-family:'Inter',sans-serif;outline:none;
+  transition:border-color 0.15s;
+}
+#sh-notes-ta:focus{border-color:var(--sea);}
+#sh-notes-ta::placeholder{color:var(--t3);}
+#sh-save-btn{
+  margin:8px 18px 0;width:calc(100% - 36px);
+  padding:11px;background:var(--ink3);
+  border:0.5px solid var(--line);border-radius:var(--rs);
+  color:var(--t2);font-size:13px;font-weight:600;cursor:pointer;
+  transition:all 0.2s;font-family:'Inter',sans-serif;
+}
+#sh-save-btn.ok{color:var(--jade);border-color:var(--jade);}
+
+/* ─── PLANNING ─── */
+.plan-hero{
+  padding:22px 18px 16px;
+  background:linear-gradient(180deg,var(--ink2) 0%,var(--ink) 100%);
+  border-bottom:0.5px solid var(--line);
+}
+.plan-hero h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;}
+.plan-hero p{font-size:13px;color:var(--t2);margin-top:5px;}
+.plan-body{padding:14px;}
+.day-card{
+  background:var(--ink2);border:0.5px solid var(--line);
+  border-radius:var(--r);margin-bottom:10px;overflow:hidden;
+  transition:border-color 0.2s ease,transform 0.2s cubic-bezier(0.25,0.8,0.25,1),box-shadow 0.2s ease;
+}
+@media (hover:hover){.day-card:hover{border-color:rgba(255,255,255,0.14);}}
+.day-hdr{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:background 0.15s ease;}
+.day-hdr:active{background:rgba(255,255,255,0.03);}
+.day-dot{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:14px;font-weight:700;flex-shrink:0;
+  transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+.day-card.open .day-dot{transform:scale(1.08);}
+.day-info{flex:1;}
+.day-date{font-size:10px;color:var(--t3);font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+.day-title{font-size:15px;font-weight:600;color:var(--t1);margin-top:1px;}
+.day-chev{color:var(--t3);font-size:20px;transition:transform 0.28s cubic-bezier(0.25,0.8,0.25,1);margin-left:auto;}
+.day-body{
+  max-height:0;overflow:hidden;opacity:0;padding:0 16px;
+  border-top:0.5px solid transparent;
+  transition:max-height 0.4s cubic-bezier(0.25,0.8,0.25,1),opacity 0.3s ease,padding 0.3s ease,border-color 0.3s ease;
+}
+.day-body.on{max-height:2400px;opacity:1;padding:14px 16px;border-top:0.5px solid var(--line);}
+.di{display:flex;gap:12px;margin-bottom:13px;}
+.di:last-child{margin-bottom:0;}
+.di-time{font-size:10px;color:var(--t3);font-weight:700;min-width:42px;padding-top:2px;letter-spacing:0.3px;font-variant-numeric:tabular-nums;}
+.di-title{font-size:13px;font-weight:600;color:var(--t1);}
+.di-desc{font-size:12px;color:var(--t2);margin-top:2px;line-height:1.55;}
+.di-tip{
+  background:rgba(42,168,224,0.08);border-left:2px solid var(--sea);
+  padding:7px 11px;border-radius:0 6px 6px 0;
+  margin-top:7px;font-size:12px;color:var(--t2);line-height:1.55;
+}
+
+/* OPTION CARDS (restaurantes a elegir) */
+.opt-label{font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--t3);margin-top:9px;margin-bottom:7px;}
+.opt-row{display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.opt-row::-webkit-scrollbar{display:none;}
+.opt-card{
+  flex:0 0 122px;background:var(--ink3);border:0.5px solid var(--line);
+  border-radius:12px;overflow:hidden;cursor:pointer;
+  transition:transform 0.18s cubic-bezier(0.25,0.8,0.25,1),border-color 0.18s ease;
+}
+.opt-card:active{transform:scale(0.96);}
+@media (hover:hover){.opt-card:hover{border-color:rgba(255,255,255,0.16);transform:translateY(-2px);}}
+.opt-img{width:100%;height:72px;object-fit:cover;display:block;background:var(--ink);}
+.opt-img-placeholder{width:100%;height:72px;display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--ink);}
+.opt-body{padding:8px 9px 9px;}
+.opt-name{font-size:11px;font-weight:600;color:var(--t1);line-height:1.32;min-height:29px;}
+.opt-maps{
+  margin-top:7px;display:flex;align-items:center;justify-content:center;gap:4px;
+  padding:6px;background:rgba(42,168,224,0.12);border-radius:8px;
+  color:var(--sea);font-size:10px;font-weight:700;text-decoration:none;
+  transition:background 0.15s ease;
+}
+.opt-maps:active{background:rgba(42,168,224,0.22);}
+
+/* ─── INFO ─── */
+.info-hero{
+  padding:22px 18px 18px;
+  background:linear-gradient(160deg,var(--ink2) 0%,var(--ink) 100%);
+  border-bottom:0.5px solid var(--line);
+}
+.info-hero h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;}
+.info-hero p{font-size:13px;color:var(--t2);margin-top:5px;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px;}
+.ic{background:var(--ink2);border-radius:var(--r);border:0.5px solid var(--line);padding:14px;transition:transform 0.18s cubic-bezier(0.25,0.8,0.25,1),border-color 0.18s ease;}
+.ic:active{transform:scale(0.97);}
+@media (hover:hover){.ic:hover{border-color:rgba(255,255,255,0.14);}}
+.ic-icon{font-size:22px;margin-bottom:7px;}
+.ic-label{font-size:10px;color:var(--t3);font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:4px;}
+.ic-val{font-size:13px;font-weight:600;color:var(--t1);line-height:1.45;}
+.budget{background:var(--ink2);border-radius:var(--r);padding:16px;margin:0 14px 14px;border:0.5px solid var(--line);}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid var(--line);}
+.brow:last-child{border-bottom:none;}
+.brow-label{font-size:13px;color:var(--t2);}
+.brow-val{font-size:13px;font-weight:600;color:var(--t1);}
+.brow.total .brow-label{font-weight:700;color:var(--gold2);}
+.brow.total .brow-val{color:var(--gold2);font-size:14px;}
+.info-sec{padding:0 14px;}
+.info-sec-title{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--t3);padding:16px 0 10px;}
+.irow{display:flex;gap:12px;padding:11px 0;border-bottom:0.5px solid var(--line);}
+.irow:last-child{border-bottom:none;}
+.irow-icon{font-size:16px;margin-top:1px;flex-shrink:0;}
+.irow-title{font-size:13px;font-weight:600;color:var(--t1);}
+.irow-desc{font-size:12px;color:var(--t2);margin-top:3px;line-height:1.55;}
+
+/* ─── VIAJE (DOCUMENTOS) ─── */
+.doc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px;}
+.doc-card{
+  position:relative;border-radius:14px;overflow:hidden;
+  aspect-ratio:1;background:var(--ink3);cursor:pointer;
+  border:0.5px solid var(--line);
+  transition:transform 0.18s cubic-bezier(0.25,0.8,0.25,1),border-color 0.18s ease;
+}
+.doc-card:active{transform:scale(0.95);}
+@media (hover:hover){.doc-card:hover{border-color:rgba(255,255,255,0.16);}}
+.doc-card img{width:100%;height:100%;object-fit:cover;display:block;}
+.doc-label{
+  position:absolute;left:0;right:0;bottom:0;padding:14px 8px 6px;
+  background:linear-gradient(0deg,rgba(0,0,0,0.78),transparent);
+  font-size:10.5px;font-weight:600;color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.doc-add{
+  aspect-ratio:1;border-radius:14px;
+  background:var(--ink3);border:1.5px dashed rgba(255,255,255,0.13);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:5px;cursor:pointer;color:var(--t3);font-size:10.5px;font-weight:600;
+  text-align:center;padding:6px;
+  transition:border-color 0.18s ease,transform 0.18s cubic-bezier(0.25,0.8,0.25,1);
+}
+.doc-add:active{border-color:var(--sea);transform:scale(0.95);}
+
+/* ─── PHOTO VIEWER ─── */
+#viewer{
+  position:fixed;inset:0;z-index:999;
+  background:rgba(0,0,0,0.97);
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+#viewer.on{display:flex;}
+#viewer img{max-width:100%;max-height:78vh;border-radius:10px;object-fit:contain;}
+#viewer-x{
+  position:absolute;top:20px;right:16px;
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,0.1);border:none;color:#fff;
+  font-size:22px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+#viewer-del{
+  margin-top:16px;padding:10px 28px;
+  background:var(--coral);color:#fff;border:none;
+  border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;
+  font-family:'Inter',sans-serif;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="hdr">
+  <div id="hdr-inner">
+    <div>
+      <div id="hdr-title">Zakynthos 🌊</div>
+      <div id="hdr-sub">6 – 13 AGOSTO 2026 · GLORIA MARIS</div>
+    </div>
+    <div id="hdr-pill">4 personas</div>
+  </div>
+</div>
+
+<!-- LUGARES -->
+<div id="scr-lugares" class="scr on">
+  <div class="top-bar">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="search" id="search-input" placeholder="Buscar lugar, restaurante..." oninput="searchPlaces(this.value)">
+    </div>
+    <div class="filter-scroll" id="filter-bar"></div>
+  </div>
+  <div id="places-list"></div>
+</div>
+
+<!-- PLANNING -->
+<div id="scr-plan" class="scr">
+  <div class="plan-hero">
+    <h2>Planning del viaje</h2>
+    <p>6 – 13 agosto · 8 días · Gloria Maris Hotel</p>
+  </div>
+  <div class="plan-body"><div id="plan-days"></div></div>
+</div>
+
+<!-- INFO -->
+<div id="scr-info" class="scr">
+  <div class="info-hero">
+    <h2>Datos del viaje</h2>
+    <p>Todo lo que necesitas antes y durante.</p>
+  </div>
+  <div class="info-grid">
+    <div class="ic"><div class="ic-icon">✈️</div><div class="ic-label">Vuelo ida</div><div class="ic-val">6 ago · Budapest<br>→ ZTH 15:45</div></div>
+    <div class="ic"><div class="ic-icon">🏨</div><div class="ic-label">Hotel</div><div class="ic-val">Gloria Maris ★★★★<br>Adults Only · Koukla</div></div>
+    <div class="ic"><div class="ic-icon">🚗</div><div class="ic-label">Coche</div><div class="ic-val">Toyota Corolla Cross<br>337€ · semana</div></div>
+    <div class="ic"><div class="ic-icon">⚓</div><div class="ic-label">Barcos</div><div class="ic-val">Keri: 7 ago<br>Agios N.: 10 ago</div></div>
+  </div>
+  <div class="info-sec"><div class="info-sec-title">Presupuesto</div></div>
+  <div class="budget">
+    <div class="brow"><span class="brow-label">Hotel Gloria Maris (7 noches)</span><span class="brow-val">3.200€</span></div>
+    <div class="brow"><span class="brow-label">Vuelos (4 personas)</span><span class="brow-val">~1.170€</span></div>
+    <div class="brow"><span class="brow-label">Coche + gasolina</span><span class="brow-val">~420€</span></div>
+    <div class="brow"><span class="brow-label">Barco Keri (7 ago)</span><span class="brow-val">222€</span></div>
+    <div class="brow"><span class="brow-label">Barco Agios Nikolaos (10 ago)</span><span class="brow-val">210€</span></div>
+    <div class="brow"><span class="brow-label">Comida estimada</span><span class="brow-val">~840€</span></div>
+    <div class="brow"><span class="brow-label">Actividades extra</span><span class="brow-val">~200€</span></div>
+    <div class="brow total"><span class="brow-label">TOTAL ESTIMADO</span><span class="brow-val">~6.262€</span></div>
+  </div>
+  <div class="info-sec">
+    <div class="info-sec-title">Consejos esenciales</div>
+    <div class="irow"><div class="irow-icon">🐢</div><div><div class="irow-title">Tortugas Caretta-Caretta</div><div class="irow-desc">No tocar ni dar de comer. Motor apagado, quietud total. Se acercan solas. Mejor antes de las 10am.</div></div></div>
+    <div class="irow"><div class="irow-icon">🌅</div><div><div class="irow-title">Amanecer en Gerakas</div><div class="irow-desc">Salir a las 5:30am. Amanecer 6:15am. 15 min del hotel. Playa vacía, posibles tortugas en la arena.</div></div></div>
+    <div class="irow"><div class="irow-icon">🚢</div><div><div class="irow-title">Barco Agios Nikolaos</div><div class="irow-desc">Salir 9am. Tours masivos llegan ~11am. ID reserva: 1301 · zanteboats.com</div></div></div>
+    <div class="irow"><div class="irow-icon">🐬</div><div><div class="irow-title">Delfines</div><div class="irow-desc">Mayor probabilidad a primera hora. El motor los atrae. No buscarlos activamente — aparecen solos.</div></div></div>
+    <div class="irow"><div class="irow-icon">📸</div><div><div class="irow-title">Mejor luz para fotos</div><div class="irow-desc">Hora dorada: 6:00–7:30am y 19:30–20:45. Navagio Viewpoint al atardecer es la foto del viaje.</div></div></div>
+    <div class="irow"><div class="irow-icon">⛽</div><div><div class="irow-title">Gasolina</div><div class="irow-desc">~2,5€/litro. Gasolinera principal en Zakynthos Town. La isla es pequeña, no gastarás mucho.</div></div></div>
+    <div class="irow"><div class="irow-icon">🌡️</div><div><div class="irow-title">Agosto en Zakynthos</div><div class="irow-desc">30–35°C de día. Agua ~26°C. Sol garantizado. Brisa por las tardes en el norte y el oeste.</div></div></div>
+  </div>
+</div>
+
+<!-- VIAJE (DOCUMENTOS) -->
+<div id="scr-viaje" class="scr">
+  <div class="plan-hero">
+    <h2>Documentos del viaje</h2>
+    <p>Tarjetas de embarque, reservas y DNI — todo a mano y sin conexión.</p>
+  </div>
+  <div id="doc-grid" class="doc-grid"></div>
+</div>
+
+<!-- DETAIL SHEET -->
+<div id="sheet">
+  <div id="sheet-bg" onclick="closeSheet()"></div>
+  <div id="sheet-panel">
+    <div class="sh-handle"></div>
+    <button id="sh-close" onclick="closeSheet()">✕</button>
+    <div id="sh-hero-wrap"></div>
+    <div class="sh-body">
+      <div id="sh-cat-row">
+        <span id="sh-cat-label"></span>
+        <span id="sh-day-badge" style="display:none;"></span>
+      </div>
+      <div id="sh-name"></div>
+      <div id="sh-desc"></div>
+      <div id="sh-tip-box" style="display:none;" class="sh-tip"></div>
+      <div class="sh-actions">
+        <a id="sh-maps-btn" class="sh-btn-maps" href="#" target="_blank">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          Ver en Google Maps
+        </a>
+      </div>
+    </div>
+    <div class="sh-sec">Mis fotos<span class="sh-sec-hint">arrastra una imagen o pega con ⌘V</span></div>
+    <div id="sh-photos"></div>
+    <div class="sh-sec">Notas personales</div>
+    <textarea id="sh-notes-ta" placeholder="Tus notas sobre este lugar..."></textarea>
+    <button id="sh-save-btn" onclick="saveNote()">Guardar nota</button>
+    <div style="height:28px;"></div>
+  </div>
+</div>
+
+<!-- PHOTO VIEWER -->
+<div id="viewer">
+  <button id="viewer-x" onclick="closeViewer()">✕</button>
+  <img id="viewer-img" src="" alt="">
+  <button id="viewer-del" onclick="deletePhoto()">Eliminar foto</button>
+</div>
+
+<input type="file" id="photo-input" accept="image/*" style="display:none;" onchange="onPhotoUpload(event)">
+<input type="file" id="doc-input" accept="image/*" style="display:none;" onchange="onDocUpload(event)">
+
+<!-- NAV -->
+<div id="nav">
+  <button class="nb on" onclick="showScr('lugares',0)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    <span class="nb-label">Lugares</span>
+  </button>
+  <button class="nb" onclick="showScr('plan',1)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    <span class="nb-label">Planning</span>
+  </button>
+  <button class="nb" onclick="showScr('viaje',2)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8a2 2 0 012-2h14a2 2 0 012 2v1.5a1.5 1.5 0 000 3V14a2 2 0 01-2 2H5a2 2 0 01-2-2v-1.5a1.5 1.5 0 000-3V8z"/><path d="M13 7v10" stroke-dasharray="1.8 2.2"/></svg>
+    <span class="nb-label">Viaje</span>
+  </button>
+  <button class="nb" onclick="showScr('info',3)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span class="nb-label">Info</span>
+  </button>
+</div>
+
+<script>
+// ─── DATA ───
+const CATS = {
+  actividad:{label:'Actividad',color:'#2ec99a',emoji:'⚓'},
+  vista:{label:'Vista',color:'#2aa8e0',emoji:'👁️'},
+  playa:{label:'Playa',color:'#d4a84b',emoji:'🏖️'},
+  restaurante:{label:'Restaurante',color:'#e8614a',emoji:'🍽️'},
+  hotel:{label:'Hotel',color:'#8b72e8',emoji:'🏨'},
+  aeropuerto:{label:'Aeropuerto',color:'#4a6580',emoji:'✈️'},
+};
+
+const POINTS = [
+  // HOTEL & AEROPUERTO
+  {
+    name:'Gloria Maris Hotel',cat:'hotel',
+    img:'https://lh3.googleusercontent.com/p/AF1QipNJsP2JMijFGjHNMHMCEBjf6OHkrQUKOYPVFMdT=s1600',
+    desc:'Vuestro hotel ★★★★ Adults Only en Koukla Beach. Piscina infinita con vistas al Mar Jónico, habitaciones suite y villa. A 5 minutos andando de Cameo Island.',
+    tip:'Check-in 6 agosto por la noche. El restaurante Komidoro tiene vistas directas a Marathonissi.',
+    day:'Día 0 — Check-in',
+    maps:'https://maps.app.goo.gl/3AYEwyCKpzu8SiM27',
+    pinned:true
+  },
+  {
+    name:'Aeropuerto Zakynthos',cat:'aeropuerto',
+    img:'',
+    desc:'Aeropuerto Internacional Dionysios Solomos. Llegada 18:45 el 6 de agosto. Vuelo de vuelta el 13 agosto.',
+    tip:'Llegar 2 horas antes del vuelo de vuelta. Recoger coche de alquiler a la salida.',
+    day:'Día 0 y Día 7',
+    maps:'https://maps.app.goo.gl/T9495MP6FBvc7cob8'
+  },
+
+  // ACTIVIDADES
+  {
+    name:'Puerto de Keri',cat:'actividad',
+    img:'https://lh3.googleusercontent.com/p/AF1QipPkmxLEHCaYf34-tLMtY_oYfC6r_e0k4mMZpHHe=s1600',
+    desc:'Puerto de salida para el barco privado a las Keri Caves. 15 minutos en coche desde el Gloria Maris. Barco de 40cv alquilado a través de Clickandboat.',
+    tip:'Salir a las 8:00am para coger el mar en calma. Llevar nevera con comida, snorkel y protector solar.',
+    day:'Día 1 — Barco Keri',
+    maps:'https://maps.app.goo.gl/rTXbPYqweAxA7xXb9',
+    pinned:true
+  },
+  {
+    name:'Puerto Agios Nikolaos',cat:'actividad',
+    img:'https://lh3.googleusercontent.com/p/AF1QipP5nUZBjCLW0AK5fBopjfmq3ESTMcRgPCZZe8wS=s1600',
+    desc:'Puerto en el norte de la isla. Punto de salida del barco a Navagio Beach y Blue Caves. Reserva confirmada en zanteboats.com.',
+    tip:'ID reserva: 1301. Salir a las 9:00am — los tours masivos no llegan hasta las 11am. Llevar nevera con comida.',
+    day:'Día 4 — Navagio',
+    maps:'https://maps.app.goo.gl/6Wz13d7wPtWf4iTy7',
+    pinned:true
+  },
+  {
+    name:'Gerakas — Amanecer',cat:'actividad',
+    img:'https://lh3.googleusercontent.com/p/AF1QipMXVS2aJqEQ3Yxs_nKqaRXEUV4OVYFsQfAG38rj=s1600',
+    desc:'Playa de anidación protegida de tortugas Caretta-Caretta. A las 6:15am en agosto el sol sale sobre el mar. Tu momento solo, como en Cerdeña.',
+    tip:'Salir del hotel a las 5:30am. Sin linterna blanca si ves tortugas. Silencio total. Lleva la cámara.',
+    day:'Día 5 — Amanecer',
+    maps:'https://maps.app.goo.gl/FUgnzWTg7Yvwnd6Q7',
+    pinned:true
+  },
+
+  // VISTAS
+  {
+    name:'Navagio Viewpoint',cat:'vista',
+    img:'https://lh3.googleusercontent.com/p/AF1QipPjBGBzJ0cjnf0cxKM6TJKuqW3g_5RVH8vt5Gw=s1600',
+    desc:'El mirador más icónico de Grecia. Vista desde lo alto de los acantilados blancos al Shipwreck Beach con el barco hundido. Acceso en coche hasta aparcamiento y 5 min andando.',
+    tip:'Mejor luz para fotos: atardecer sobre las 20:00 con luz dorada. También brutal por la mañana temprano con el azul del mar.',
+    day:'Día 4 — Navagio',
+    maps:'https://maps.app.goo.gl/HjtY5enBKNom5rNr5'
+  },
+  {
+    name:'Blue Caves',cat:'vista',
+    img:'https://lh3.googleusercontent.com/p/AF1QipPXpOFMUYrIqF-MR5h2U0dkxNrWnvfDPCa34Xg=s1600',
+    desc:'Cuevas marinas en Cape Skinari donde el agua brilla en tonos azul eléctrico por el reflejo de la luz solar. Visita en barco desde Agios Nikolaos de camino a Navagio.',
+    tip:'La luz azul es más intensa entre las 10am y las 12pm cuando el sol está alto.',
+    day:'Día 4 — Navagio',
+    maps:'https://maps.app.goo.gl/REJaDfFZ4rj9eZXv9'
+  },
+  {
+    name:'Keri Caves',cat:'vista',
+    img:'https://lh3.googleusercontent.com/p/AF1QipObvAT5Bs1gg1yI0NjvXRzgHuWwGpRJPGDFHqSJ=s1600',
+    desc:'Sistema de cuevas marinas en la costa suroeste. Aguas turquesas en tonos imposibles. Se visitan en barco desde Puerto Keri, a pocos minutos navegando.',
+    tip:'Apagar el motor dentro de las cuevas y escuchar. El sonido del mar reverberando es increíble.',
+    day:'Día 1 — Barco Keri',
+    maps:'https://maps.app.goo.gl/LCPutJvj9Fe79LEGA'
+  },
+  {
+    name:'Marathonisi Caves',cat:'vista',
+    img:'https://lh3.googleusercontent.com/p/AF1QipNxvhPzKr5bCWj4fQNOLaZpvd00VPWHi5-w3=s1600',
+    desc:'Cuevas en la isla Marathonisi, reserva natural de tortugas Caretta-Caretta. Las tortugas anidan en sus playas y nadan en las aguas alrededor.',
+    tip:'Muy probable ver tortugas en superficie alrededor de la isla. Motor apagado y esperar.',
+    day:'Día 1 — Barco Keri',
+    maps:'https://maps.app.goo.gl/e2UaAmXvbzWiwa6t9'
+  },
+  {
+    name:'Eros Caves',cat:'vista',
+    img:'',
+    desc:'Cuevas marinas en la zona sur, accesibles en barco desde Puerto Keri. Parte de la ruta del barco privado.',
+    tip:'Incluidas en la ruta del barco desde Keri junto con las Keri Caves.',
+    day:'Día 1 — Barco Keri',
+    maps:'https://maps.app.goo.gl/yQWurSV7ZkxgxfKS8'
+  },
+  {
+    name:'Cameo Island',cat:'vista',
+    img:'https://lh3.googleusercontent.com/p/AF1QipP3L_wfgFWE2-YKL5PkV8kVRd-6KcSqhMzWFk=s1600',
+    desc:'Islita privada conectada por un puente de madera desde Agios Sostis, literalmente a 5 minutos andando del hotel. Atardeceres sobre el Mar Jónico.',
+    tip:'Ir sobre las 20:00 para el atardecer. Muy fotogénico. Entrada gratuita.',
+    day:'Día 2 — Atardecer',
+    maps:'https://maps.app.goo.gl/PTWdmJnabSeDgjvUA'
+  },
+  {
+    name:'Myzithres Viewpoint',cat:'vista',
+    img:'https://lh3.googleusercontent.com/p/AF1QipNyGVSGSIaXaJcF5Qv5OGevxpfVbhgwRXr8FU=s1600',
+    desc:'Formaciones rocosas únicas en el mar, costa suroeste. Uno de los paisajes más salvajes e impresionantes de la isla. Muy fotogénico.',
+    tip:'Requiere bajada a pie desde aparcamiento. Mejor por la mañana o al atardecer.',
+    day:'Día 5 — Zona oeste',
+    maps:'https://maps.app.goo.gl/LoVvEizbCUhkmftDA'
+  },
+  {
+    name:'Plakaki Viewpoint',cat:'vista',
+    img:'',
+    desc:'Mirador en la zona sur con vistas a la bahía de Laganas y a Marathonissi en el horizonte.',
+    maps:'https://maps.app.goo.gl/X2JApYGwUcDaZuGg8'
+  },
+  {
+    name:'Zakynthos Town',cat:'vista',
+    img:'https://lh3.googleusercontent.com/p/AF1QipNmFPVYhVeFcBl5v3QzXRbH5dQ0lJHt_8OWi=s1600',
+    desc:'Capital de la isla, reconstruida tras el terremoto de 1953. Castillo veneciano en lo alto con vistas panorámicas, plaza Solomos con cafés, iglesia de Agios Dionysios patrón de la isla.',
+    tip:'Media mañana es suficiente. Subir al castillo veneciano para las vistas, aunque hay que ir andando desde el centro.',
+    maps:'https://maps.app.goo.gl/UKCkSGYXCTBe3dSt5'
+  },
+
+  // PLAYAS
+  {
+    name:'Navagio Beach',cat:'playa',
+    img:'https://lh3.googleusercontent.com/p/AF1QipPVZ2mjYrRtC2yyb5m2Bc5GNf2v6RNzQpDWgEw=s1600',
+    desc:'Shipwreck Beach — la playa más fotografiada de Grecia. Arena blanca, acantilados blancos, barco hundido y agua turquesa irreal. Acceso solo en barco.',
+    tip:'Llegar antes de las 10am para estar casi solos. La arena se llena de grupos a partir de las 11am.',
+    day:'Día 4 — Navagio',
+    maps:'https://maps.app.goo.gl/NYiucLga9vSKzsbq7'
+  },
+  {
+    name:'Porto Limnionas',cat:'playa',
+    img:'https://lh3.googleusercontent.com/p/AF1QipO4hb2rA2P4hJpTLEGcqiF9YZFVVqeqlhJ4nU=s1600',
+    desc:'Piscina natural entre rocas en la costa oeste. Agua turquesa perfecta protegida del oleaje. Una de las experiencias más especiales de la isla. 30 min en coche desde el hotel.',
+    tip:'Llegar antes de las 11am. Las rocas pueden estar resbaladizas — calzado de agua recomendado.',
+    day:'Día 5 — Porto Limnionas',
+    maps:'https://maps.app.goo.gl/N6RStmpH7EpmwL467'
+  },
+  {
+    name:'Gerakas Beach',cat:'playa',
+    img:'https://lh3.googleusercontent.com/p/AF1QipMXVS2aJqEQ3Yxs_nKqaRXEUV4OVYFsQfAG38rj=s1600',
+    desc:'Zona de anidación protegida de tortugas Caretta-Caretta. Playa de arena fina, aguas cristalinas, muy tranquila. 15 min del hotel. La más especial para el amanecer.',
+    tip:'A las 6am tienes la playa completamente sola. Puede haber rastros de tortugas en la arena.',
+    day:'Día 5 — Amanecer',
+    maps:'https://maps.app.goo.gl/FUgnzWTg7Yvwnd6Q7'
+  },
+  {
+    name:'Banana Beach',cat:'playa',
+    img:'https://lh3.googleusercontent.com/p/AF1QipPpV2RHlGcHZnHlAOPj9VEBf5tqFMLO1pW6Gk=s1600',
+    desc:'Playa amplia de arena dorada en el este de la isla. Aguas cristalinas, servicio de tumbonas, restaurante. Buena opción para tus padres por la comodidad.',
+    day:'Día 1 o días libres',
+    maps:'https://maps.app.goo.gl/EuQLZhu5eYXQ3nEz7'
+  },
+  {
+    name:'Kalamaki Beach',cat:'playa',
+    img:'https://lh3.googleusercontent.com/p/AF1QipOJvqnvZCzI3Nz5Q9oHcZcEgXUxE1Wc5pPcYg=s1600',
+    desc:'Playa de arena fina en la bahía de Laganas, zona de reserva marina de tortugas. Tranquila por normativa ambiental — no se permiten motos de agua ni música alta.',
+    maps:'https://maps.app.goo.gl/pzgYAdNmdGcJYirn8'
+  },
+  {
+    name:'Porto Roxa Beach',cat:'playa',
+    img:'https://lh3.googleusercontent.com/p/AF1QipMx2Hq_TNuE3EcJuM_WBME-YBGxExVU64OQOU=s1600',
+    desc:'Cala tranquila en la costa oeste, pocas personas. Agua muy limpia y clara. Rodeada de vegetación y acantilados.',
+    day:'Día 5 — Zona oeste',
+    maps:'https://maps.app.goo.gl/PwZJ9XA8DdgYY9Yo8'
+  },
+  {
+    name:'Xigia Beach',cat:'playa',
+    img:'https://lh3.googleusercontent.com/p/AF1QipP0M3MxNu0RlKFu8mRFEI5QL8xzMp7NzDoP=s1600',
+    desc:'Playa única en el norte con azufre natural en el agua. El olor es característico pero el efecto en la piel es increíble. Turística pero curiosa.',
+    tip:'El azufre sale de una fuente submarina justo en la orilla. Efecto especial en la piel.',
+    maps:'https://maps.app.goo.gl/1DfC3GQQuT8Z4ske7'
+  },
+  {
+    name:'Marathonisi Beach',cat:'playa',
+    img:'',
+    desc:'Playa en la isla de las tortugas. Arena blanca, acceso solo en barco desde la bahía de Laganas. Las tortugas anidan aquí.',
+    day:'Día 1 — Barco Keri',
+    maps:'https://maps.app.goo.gl/aTpgKgRG58XDcjs48'
+  },
+  {
+    name:'Makris Beach',cat:'playa',
+    img:'',
+    desc:'Playa tranquila en el norte, poca gente, acceso relativamente fácil desde carretera.',
+    maps:'https://maps.app.goo.gl/dJEjbvUEyFZ2Ti8Z6'
+  },
+  {
+    name:'Pelagaki Beach',cat:'playa',
+    img:'',
+    desc:'Playa pequeña en el norte de la isla, tranquila y con buenas aguas.',
+    maps:'https://maps.app.goo.gl/9Rn8Nj2sM3e62K8y9'
+  },
+  {
+    name:'Wolf Rocks Beach',cat:'playa',
+    img:'',
+    desc:'Playa con formaciones rocosas características en el norte. Menos turística.',
+    maps:'https://maps.app.goo.gl/aNwJyKL3KHvarbFP6'
+  },
+  {
+    name:'Filippoi Beach',cat:'playa',
+    img:'',
+    desc:'Playa en el noroeste, cerca de Navagio. Acceso principalmente en barco.',
+    day:'Día 4 — Navagio',
+    maps:'https://maps.app.goo.gl/K8jdFFTPDmHCZyUL9'
+  },
+  {
+    name:'Chrissie Beach',cat:'playa',
+    img:'',
+    desc:'Playa en el sur, accesible en barco desde Puerto Keri. Parte de la ruta del barco privado.',
+    day:'Día 1 — Barco Keri',
+    maps:'https://maps.app.goo.gl/BW3eXKGL1QSCtQA7A'
+  },
+  {
+    name:'Piscinas Beach',cat:'playa',
+    img:'',
+    desc:'Piscinas naturales en roca en el sur. Acceso en barco.',
+    day:'Día 1 — Barco Keri',
+    maps:'https://maps.app.goo.gl/NgvtW4JBuZ8FP1WXA'
+  },
+  {
+    name:'Marathias Beach',cat:'playa',
+    img:'',
+    desc:'Playa amplia en el sur de la isla. Arena fina y aguas tranquilas.',
+    maps:'https://maps.app.goo.gl/jUD3Y6fFp56goTMTA'
+  },
+
+  {
+    name:'Lidl Zakynthos',cat:'actividad',
+    img:'',
+    desc:'Supermercado Lidl de camino del aeropuerto al hotel. Parada imprescindible el día de llegada para comprar comida y bebida para el barco del día siguiente y provisiones de la semana. También buena parada la noche antes de cada salida en barco.',
+    tip:'Comprar: agua, bebidas para el barco, fruta, snacks, desayunos, protector solar si no lleváis. Cerrado tarde — mejor parar antes de las 21h.',
+    day:'Día 0 y Día 3 — Antes de cada barco',
+    maps:'https://maps.app.goo.gl/A1MqQ2J2CJQU9xWK6'
+  },
+  {
+    name:'Sunset Michalis Taverna',cat:'restaurante',
+    img:'https://lh3.googleusercontent.com/p/AF1QipNzP8vY7hUOFCAFLjAf2YIFCqxABeSe2pI9JiE=s1600',
+    desc:'La mejor cena del viaje. Taverna en la costa oeste con vistas directas al atardecer sobre el Mar Jónico. Cocina griega auténtica y marisco.',
+    tip:'Reservar mesa con antelación para la mejor vista. Ir sobre las 20:00 para pillar el atardecer.',
+    day:'Día 5 — Cena especial',
+    maps:'https://maps.app.goo.gl/KENdfCFgEqdCpnADA',
+    pinned:true
+  },
+  {
+    name:'Lele Sunset Bar',cat:'restaurante',
+    img:'https://lh3.googleusercontent.com/p/AF1QipMymPy2yt1LblqiEcJsj8zP-YI3ZxGlqr7zBk=s1600',
+    desc:'Bar con terraza en la costa oeste, vistas directas al atardecer. Cócteles y comida ligera con una de las mejores vistas de la isla.',
+    tip:'Llegar sobre las 19:30 para conseguir sitio. El atardecer desde aquí es brutal para fotos.',
+    day:'Día 2 — Atardecer',
+    maps:'https://maps.app.goo.gl/qC19hvLkxVkRSJnR7'
+  },
+  {
+    name:'Koukla Beach Restaurant',cat:'restaurante',
+    img:'https://lh3.googleusercontent.com/p/AF1QipO5LuP8g1G0Yjh4iR7paqRFWCR-tPKGNlkd2g=s1600',
+    desc:'Terraza frente al mar en Koukla Beach, a pocos minutos andando del Gloria Maris. Buena opción para la primera noche o cenas tranquilas cerca del hotel.',
+    tip:'Pedir mesa con vistas al mar. La primera noche aquí es perfecta para ir sin coche.',
+    day:'Día 0 — Primera noche',
+    maps:'https://maps.app.goo.gl/MMmf1KkjNu7tJRQLA'
+  },
+  {
+    name:'Apetito Resto Bar',cat:'restaurante',
+    img:'https://lh3.googleusercontent.com/p/AF1QipODXexhfUpgRKA7-KyJOJsRuPMO0abHV3mRQM=s1600',
+    desc:'Restaurante en Laganas con buenas reviews. Comidas del mediodía antes de las excursiones o cenas tranquilas. Buen relación calidad-precio.',
+    day:'Día 2 — Comida',
+    maps:'https://maps.app.goo.gl/eJFiNcXsx5hpyexK9'
+  },
+  {
+    name:'Porto Limnionas Tavern',cat:'restaurante',
+    img:'https://lh3.googleusercontent.com/p/AF1QipMKt9OcZmkFOvJ9j63kijS8bnLmYjYDWk6UQ=s1600',
+    desc:'Taverna justo junto a la piscina natural de Porto Limnionas. Comida griega tradicional con vistas al mar. Única en su ubicación.',
+    tip:'Comer aquí después de bañarte en Porto Limnionas. Vista directa al agua mientras comes.',
+    day:'Día 5 — Comida',
+    maps:'https://maps.app.goo.gl/1vuCNBXUYwRGGeiu7'
+  },
+  {
+    name:'Korakonisi Cave Restaurant',cat:'restaurante',
+    img:'https://lh3.googleusercontent.com/p/AF1QipP_xGVX3V5rA8jNvHFVPlK-dYmGAkMiPXWh0=s1600',
+    desc:'Experiencia única: restaurante construido parcialmente en una cueva natural en la costa oeste. Las vistas y el ambiente son completamente diferentes a cualquier otro sitio de la isla.',
+    tip:'Reservar mesa. La experiencia vale más por el ambiente que por la comida en sí.',
+    maps:'https://maps.app.goo.gl/QoTTaAGrrjgwFM3i7'
+  },
+  {
+    name:"Zefki Leeda's",cat:'restaurante',
+    img:'',
+    desc:'Restaurante en el sur de la isla, muy cerca del Gloria Maris. Cómodo para las noches que no queréis alejaros del hotel.',
+    maps:'https://maps.app.goo.gl/mQ9HRfgPBDiaiL1A6'
+  },
+  {
+    name:'Al Nur Gourmet',cat:'restaurante',
+    img:'',
+    desc:'Restaurante en la zona de Gerakas-Banana Beach. Buenas vistas al mar, cocina variada.',
+    maps:'https://maps.app.goo.gl/9dbDK7JJhwzbYWJQ7'
+  },
+  {
+    name:'Keri Lighthouse Restaurant',cat:'restaurante',
+    img:'https://lh3.googleusercontent.com/p/AF1QipO_jUl3sRGGYBmB3A8xJaU3-IrVxn6yYBdj=s1600',
+    desc:'Restaurante junto al faro de Keri, en el extremo sur de la isla. Vistas al mar abierto, ambiente tranquilo y alejado del turismo.',
+    maps:'https://maps.app.goo.gl/1wfzfVXxn1iJ4PBu5'
+  },
+  {
+    name:'Windmill Keri',cat:'restaurante',
+    img:'',
+    desc:'Restaurante en un antiguo molino en Keri, con vistas al Mar Jónico. Ambiente auténtico y tranquilo.',
+    maps:'https://maps.app.goo.gl/tTdbkNbCdzQF5qpw7'
+  },
+  {
+    name:'Konaki Keri',cat:'restaurante',
+    img:'',
+    desc:'Taverna en la zona de Keri. Cocina griega tradicional.',
+    maps:'https://maps.app.goo.gl/wbc1hwMFmT4vGBgs6'
+  },
+  {
+    name:'San Leon Tavern',cat:'restaurante',
+    img:'',
+    desc:'Taverna en la montaña interior de la isla. Ambiente auténtico griego, alejado del turismo costero.',
+    maps:'https://maps.app.goo.gl/gxBTxKpVuMCBBqrq7'
+  },
+  {
+    name:'Cross Tavern',cat:'restaurante',
+    img:'',
+    desc:'Taverna en la costa oeste, cerca de Sunset Michalis. Buena alternativa si Michalis está lleno.',
+    maps:'https://maps.app.goo.gl/jyZeoPuVwHEtTsxJ6'
+  },
+  {
+    name:'Sunset Agalas',cat:'restaurante',
+    img:'',
+    desc:'Restaurante en la zona oeste con vistas al atardecer. Alternativa a Lele para el atardecer.',
+    maps:'https://maps.app.goo.gl/4LR7S9jUoRyYebqU7'
+  },
+  {
+    name:'The Garden of Tastes',cat:'restaurante',
+    img:'',
+    desc:'Restaurante en la zona montaña-oeste. Ambiente especial entre vegetación.',
+    maps:'https://maps.app.goo.gl/ZCN8ZxN8xcKRMb1S7'
+  },
+  {
+    name:'To Diafokereiko',cat:'restaurante',
+    img:'',
+    desc:'Taverna de montaña en el interior de la isla. Cocina griega auténtica.',
+    maps:'https://maps.app.goo.gl/4m5eCsKkmRr77Hsj7'
+  },
+  {
+    name:'Taverna Xigia',cat:'restaurante',
+    img:'',
+    desc:'Taverna junto a Xigia Beach en el norte. Comer aquí tras el baño en las aguas de azufre.',
+    maps:'https://maps.app.goo.gl/hjs4hSGCxEmCsKUv8'
+  },
+  {
+    name:'Klontiraki Fish Tavern',cat:'restaurante',
+    img:'',
+    desc:'Taverna de pescado fresco en el norte de la isla. Ideal el día de Navagio para comer en el norte.',
+    day:'Día 4 — Navagio',
+    maps:'https://maps.app.goo.gl/DvzB3MX9Pb8JybB48'
+  },
+  {
+    name:'Porto Koukla',cat:'restaurante',
+    img:'',
+    desc:'Restaurante frente al mar en Laganas/Koukla. Cerca del hotel, opción cómoda para cenas.',
+    maps:'https://maps.app.goo.gl/5kDPCXemdCrAHskCA'
+  },
+  {
+    name:'Grecos Restaurant',cat:'restaurante',
+    img:'',
+    desc:'Restaurante en Laganas. Cocina griega variada.',
+    maps:'https://maps.app.goo.gl/AywgzQvxWfzLyMkt5'
+  },
+  {
+    name:'Panos',cat:'restaurante',
+    img:'',
+    desc:'Restaurante en Laganas.',
+    maps:'https://maps.app.goo.gl/sxhqBYJks2q9GdLH8'
+  },
+  {
+    name:'Fondo Beach Bar',cat:'restaurante',
+    img:'',
+    desc:'Bar de playa en Porto Roxa con buena pinta. Comida y bebidas con vistas directas al mar en una de las calas más tranquilas del oeste. Mejor opción que Porto Limnionas Tavern para la comida del día de la costa oeste.',
+    tip:'Comer aquí y luego quedaros un rato en Porto Roxa — dos por uno. Cala tranquila con agua muy limpia.',
+    day:'Día 3 — Costa oeste',
+    maps:'https://maps.app.goo.gl/MipvJ3Gh8y8CUuKW6'
+  },
+  {
+    name:'Nobelos Seaside Lodge',cat:'restaurante',
+    img:'https://lh3.googleusercontent.com/p/AF1QipNzP8vY7hUOFCAFLjAf2YIFCqxABeSe2pI9JiE=s1600',
+    desc:'Restaurante con vistas al mar cerca de Agios Nikolaos, en el norte-este de la isla. Ambiente premium, cocina mediterránea. Perfecto para una comida especial el día de exploración del este.',
+    tip:'Reservar mesa con antelación. Buenas vistas al mar desde la terraza. El camino por la costa este hasta aquí ya es parte de la experiencia.',
+    day:'Día 7 — Norte-este',
+    maps:'https://maps.app.goo.gl/UxGa9XvEgbFxM1jo9'
+  },
+  {
+    name:'Rua Mat',cat:'restaurante',
+    img:'',
+    desc:'Restaurante en la zona este de la isla.',
+    maps:'https://maps.app.goo.gl/tH85MnMLqymNxDKAA'
+  },
+  {
+    name:'Porto Mela (Dafni Beach)',cat:'restaurante',
+    img:'',
+    desc:'Restaurante en Dafni Beach, zona tranquila del sur.',
+    maps:'https://maps.app.goo.gl/GrpR3w4tnsDbbKUy9'
+  },
+];
+
+const PLAN = [
+  {day:0,date:'Mié 6 ago',title:'Llegada',color:'#4a6580',items:[
+    {time:'18:45',title:'Aterrizaje en Zakynthos',desc:'Recoger maletas y Toyota Corolla Cross de alquiler en el aeropuerto.'},
+    {time:'19:30',title:'Parada en Lidl',desc:'De camino al hotel. Comprar agua, comida y bebida para el barco del día siguiente, desayunos y provisiones de la semana.',tip:'Imprescindible parar aquí antes de llegar al hotel. Cierran antes de las 21h.',point:'Lidl Zakynthos'},
+    {time:'20:00',title:'Check-in Gloria Maris',desc:'Instalarse, ver las habitaciones suite. Primera impresión del hotel y la piscina.'},
+    {time:'21:15',title:'Cena primera noche',desc:'Koukla Beach Restaurant, a pie desde el hotel. Pedir mesa con vistas al mar.',tip:'Primera noche es llegar, respirar y cenar tranquilos. Sin coche.',point:'Koukla Beach Restaurant'}
+  ]},
+  {day:1,date:'Jue 7 ago',title:'Barco Keri Caves',color:'#2ec99a',items:[
+    {time:'7:30',title:'Salida hacia Puerto Keri',desc:'15 minutos en coche desde el hotel.',point:'Puerto de Keri'},
+    {time:'8:00',title:'Barco privado todo el día',desc:'Keri Caves, Eros Caves, Marathonisi. Motor apagado buscando tortugas y delfines. Comer a bordo.',tip:'Llevar nevera con comida y agua, snorkel, protector solar y toallas. Si aparecen delfines, para el motor y espera en silencio.'},
+    {time:'18:00',title:'Vuelta al hotel',desc:'Ducha y descanso.'},
+    {time:'19:45',title:'Atardecer en Myzithres',desc:'Formaciones rocosas únicas en la costa oeste. Relativamente cerca del sur. Brutal para fotos al atardecer.',tip:'El sol se pone a las 20:45. Llegar sobre las 20:00.',point:'Myzithres Viewpoint'},
+    {time:'21:30',title:'Cena — a elegir',desc:'Por la zona de Keri o cerca del hotel de vuelta. Tres opciones cerca, decidís sobre la marcha.',options:['Windmill Keri','Konaki Keri',"Zefki Leeda's"]}
+  ]},
+  {day:2,date:'Vie 8 ago',title:'Playas del este + Cameo Island',color:'#d4a84b',items:[
+    {time:'',title:'Mañana libre en el hotel',desc:'Piscina, desayuno largo, playa del hotel. Sin prisas.'},
+    {time:'11:30',title:'Cameo Island',desc:'5 min andando desde el hotel. Islita conectada por puente de madera, muy fotogénica.',point:'Cameo Island'},
+    {time:'13:30',title:'Comida — a elegir',desc:'Opciones cerca: Laganas, zona hotel o Keri. Sin decisión fija — elegir el día según ganas de coche o no.',options:['Apetito Resto Bar','Porto Koukla',"Zefki Leeda's"]},
+    {time:'16:00',title:'Vuelta al hotel',desc:'Cambiarse y prepararse para la tarde-noche.'},
+    {time:'19:30',title:'Lele Sunset Bar',desc:'Costa oeste, 30 min en coche. Cócteles con vistas directas al atardecer.',tip:'Llegar a las 19:30 para conseguir buena mesa. El sol se pone a las 20:45.',point:'Lele Sunset Bar'},
+    {time:'21:00',title:'Cena — a elegir',desc:'Si no cenáis en Lele, hay un par de opciones justo en la zona montaña-oeste.',options:['The Garden of Tastes','Sunset Agalas','Cross Tavern']}
+  ]},
+  {day:3,date:'Sáb 9 ago',title:'Amanecer Gerakas + Porto Limnionas',color:'#e8c56a',items:[
+    {time:'5:30',title:'Solo a Gerakas — TU MOMENTO',desc:'15 min en coche. Amanecer 6:15am. Playa vacía. Posibles tortugas en la arena o en el agua.',tip:'Silencio total. Sin linterna blanca. Lleva la cámara. Como en Cerdeña pero mejor porque lo elegiste.',point:'Gerakas — Amanecer'},
+    {time:'7:30',title:'Vuelta al hotel',desc:'Desayuno con todos. Un par de horas de descanso.'},
+    {time:'11:00',title:'Porto Limnionas',desc:'30 min en coche. Piscina natural entre rocas, agua turquesa perfecta. Una de las experiencias más especiales de la isla.',point:'Porto Limnionas'},
+    {time:'13:30',title:'Comida en Fondo Beach Bar',desc:'Bar de playa en Porto Roxa. Mejor pinta que Porto Limnionas Tavern y de paso aprovecháis para ver Porto Roxa.',tip:'Dos por uno — coméis bien y os quedáis un rato en la cala de Porto Roxa, que era un sitio pendiente.',point:'Fondo Beach Bar'},
+    {time:'15:00',title:'Tarde en Porto Roxa',desc:'Cala tranquila, agua muy limpia, pocas personas. Aprovechar el baño de tarde antes de volver al hotel.',point:'Porto Roxa Beach'},
+    {time:'18:30',title:'Parada en el supermercado',desc:'De vuelta hacia el hotel, parar a comprar agua, fruta, snacks y bebida para el barco de mañana rumbo a Navagio.',tip:'Mañana salís pronto (7:30) y coméis a bordo — dejadlo todo listo esta noche para no perder tiempo.',point:'Lidl Zakynthos'},
+    {time:'20:15',title:'Cena especial — Sunset Michalis',desc:'La mejor cena del viaje. Costa oeste, vistas directas al atardecer sobre el Mar Jónico.',tip:'Reservar mesa. Es la cena que recordaréis del viaje.',point:'Sunset Michalis Taverna'}
+  ]},
+  {day:4,date:'Dom 10 ago',title:'Navagio + Blue Caves',color:'#2aa8e0',items:[
+    {time:'7:30',title:'Salida hacia el norte',desc:'1 hora en coche hasta Puerto Agios Nikolaos.',point:'Puerto Agios Nikolaos'},
+    {time:'9:00',title:'Barco — directo a Navagio',desc:'Llegar a Navagio antes de los tours masivos. Bajarse a la playa, nadar, fotos sin nadie.',tip:'ID reserva 1301 · Llevar nevera. Tours grandes llegan ~11am. Tenéis 2 horas de ventaja.'},
+    {time:'12:00',title:'Ruta por costa norte',desc:'Paradas en calas del camino. Blue Caves a la vuelta sobre las 14:00.',point:'Blue Caves'},
+    {time:'16:00',title:'Tarde en el norte',desc:'Explorar alguna playa del norte, Xigia Beach con el azufre, o simplemente descansar por la zona.',point:'Xigia Beach'},
+    {time:'19:45',title:'Mirador de Navagio al atardecer',desc:'Tú te quedas mientras los demás esperan o cenan en algún bar del norte.',tip:'LA foto del viaje. Tú solo o con quien se anime. El sol cayendo sobre el barco hundido a las 20:45.',point:'Navagio Viewpoint'},
+    {time:'22:00',title:'Vuelta y cena cerca del hotel',desc:'Llegar al hotel, cenar cerca sin más coche.',point:'Koukla Beach Restaurant'}
+  ]},
+  {day:5,date:'Lun 11 ago',title:'Barco Agios Nikolaos — ya hecho',color:'#2aa8e0',items:[
+    {time:'',title:'⚠️ Este día ya está cubierto en Día 4',desc:'El barco de Agios Nikolaos es el Día 4. Aquí pongo lo que corresponde realmente al Día 5 según tu planning.'}
+  ]},
+  {day:5,date:'Lun 11 ago',title:'Norte + Navagio Viewpoint',color:'#8b72e8',items:[
+    {time:'9:00',title:'Salida hacia el norte',desc:'Explorar playas del norte: Makris, Pelagaki, Wolf Rocks. Menos turísticas y tranquilas.'},
+    {time:'14:00',title:'Comida en el norte',desc:'Klontiraki Fish Tavern para comer pescado fresco.',point:'Klontiraki Fish Tavern'},
+    {time:'17:00',title:'Tarde por el norte',desc:'Pueblo de Volimes, miel y productos locales. Anafonitria (monasterio medieval).'},
+    {time:'19:45',title:'Mirador de Navagio al atardecer',desc:'Si el Día 4 no pudo ser, este es el momento. Tú solo si es necesario.',tip:'Luz dorada sobre el barco hundido. La foto del viaje.',point:'Navagio Viewpoint'},
+    {time:'22:00',title:'Vuelta y cena cerca del hotel',desc:'Cenar cerca del hotel, sin más coche después de un día largo.',point:'Porto Koukla'}
+  ]},
+  {day:6,date:'Mar 12 ago',title:'Gerakas + Dafni + Myzithres solo',color:'#e8614a',items:[
+    {time:'10:00',title:'Gerakas Beach o Dafni Beach',desc:'Playa tranquila de mañana. Aguas cristalinas, poca gente.',point:'Gerakas Beach'},
+    {time:'13:30',title:'Comida en Porto Mela',desc:'Restaurante en Dafni Beach, de paso entre Gerakas y el hotel.',tip:'Una de las mejores vistas al mar comiendo. No os lo perdáis este día.',point:'Porto Mela (Dafni Beach)'},
+    {time:'15:30',title:'Banana Beach de camino',desc:'Parada rápida en Banana Beach de vuelta al hotel. Arena fina, aguas tranquilas.',point:'Banana Beach'},
+    {time:'17:00',title:'Hotel — ducha y descanso',desc:'Que tus padres y hermano descansen. Tú prepárate para la tarde.'},
+    {time:'19:30',title:'Tú solo — Myzithres al atardecer',desc:'Formaciones rocosas únicas en el mar. El atardecer aquí es de otro nivel. Tu momento de la semana en soledad.',tip:'El sol se pone a las 20:45. Lleva la cámara. Este es el plan de los dos: Myzithres o Día 1 barco — tú eliges cuál va mejor.',point:'Myzithres Viewpoint'},
+    {time:'21:30',title:'Cena — a elegir',desc:'Cerca del hotel, zona Keri o Laganas.',options:['Konaki Keri','Windmill Keri',"Zefki Leeda's"]}
+  ]},
+  {day:7,date:'Mar 12 ago',title:'Costa este + Zakynthos Town',color:'#d4a84b',items:[
+    {time:'10:00',title:'Zakynthos Town',desc:'Capital de la isla. Castillo veneciano con vistas panorámicas, plaza Solomos, iglesia Agios Dionysios. Media mañana tranquila.',tip:'Subir al castillo veneciano — las vistas merecen los 10 min de caminata.',point:'Zakynthos Town'},
+    {time:'12:30',title:'Ruta por la costa este subiendo al norte',desc:'Ir subiendo por la costa este poco a poco. Paradas en Xigia Beach para el baño de azufre si apetece.',point:'Xigia Beach'},
+    {time:'14:00',title:'Comida en Nobelos Seaside Lodge',desc:'Restaurante premium cerca de Agios Nikolaos. La mejor comida de la semana con vistas al mar.',tip:'Reservar mesa antes de salir del hotel por la mañana. Experiencia especial para el penúltimo día.',point:'Nobelos Seaside Lodge'},
+    {time:'16:30',title:'Playas del norte — Xigia o Wolf Rocks',desc:'Playas tranquilas del norte, menos turísticas. Buen baño de tarde antes de volver.',point:'Wolf Rocks Beach'},
+    {time:'19:30',title:'Último atardecer del viaje',desc:'Zona oeste — Sunset Agalas o Cross Tavern para cerrar el viaje con el sol cayendo al mar.',tip:'El último atardecer siempre duele un poco más. Disfrútalo.',point:'Sunset Agalas'},
+    {time:'21:30',title:'Cena de despedida — a elegir',desc:'Por la zona oeste o volvéis cerca del hotel. Última cena, elegid con calma.',options:['Cross Tavern','Sunset Agalas','The Garden of Tastes']}
+  ]},
+  {day:8,date:'Mié 13 ago',title:'Vuelo de vuelta',color:'#4a6580',items:[
+    {time:'Mañana',title:'Check-out',desc:'Última vuelta por Koukla Beach. Desayuno tranquilo en el hotel.'},
+    {time:'',title:'Vuelo Zakynthos → Valencia',desc:'Vía Budapest. Llegar al aeropuerto 2 horas antes.',tip:'El viaje que empezaste a planificar hace semanas. Lo has hecho muy bien.',point:'Aeropuerto Zakynthos'}
+  ]}
+];
+
+// ─── STATE ───
+let currentCat = 'all';
+let currentPoint = null;
+let viewerName = null;
+let viewerIdx = -1;
+let viewerMode = 'place'; // 'place' | 'doc'
+
+// ─── STORAGE ───
+const pkey = n => 'zph_' + n.replace(/\W/g,'_');
+const nkey = n => 'znote_' + n.replace(/\W/g,'_');
+const getPhotos = n => { try{return JSON.parse(localStorage.getItem(pkey(n))||'[]');}catch{return[];} };
+const savePhotos = (n,a) => { try{localStorage.setItem(pkey(n),JSON.stringify(a));}catch{alert('Almacenamiento lleno.');} };
+const getNote = n => localStorage.getItem(nkey(n)) || '';
+const setNote = (n,v) => localStorage.setItem(nkey(n), v);
+const getDocs = () => { try{return JSON.parse(localStorage.getItem('ztrip_docs')||'[]');}catch{return[];} };
+const saveDocs = a => { try{localStorage.setItem('ztrip_docs',JSON.stringify(a));}catch{alert('Almacenamiento lleno.');} };
+
+// ─── FILTER BAR ───
+const catDefs = [
+  {key:'all',label:'Todo',color:'#2aa8e0'},
+  {key:'actividad',label:'Actividades',color:'#2ec99a'},
+  {key:'vista',label:'Vistas',color:'#2aa8e0'},
+  {key:'playa',label:'Playas',color:'#d4a84b'},
+  {key:'restaurante',label:'Restaurantes',color:'#e8614a'},
+  {key:'hotel',label:'Hotel',color:'#8b72e8'},
+];
+const fb = document.getElementById('filter-bar');
+catDefs.forEach(c => {
+  const chip = document.createElement('button');
+  chip.className = 'fchip' + (c.key==='all' ? ' on' : '');
+  chip.textContent = c.label;
+  if(c.key==='all'){ chip.style.background=c.color; chip.style.borderColor=c.color; chip.style.color='#080f1a'; }
+  chip.onclick = () => {
+    currentCat = c.key;
+    document.querySelectorAll('.fchip').forEach(b => { b.className='fchip'; b.style.cssText=''; });
+    chip.className = 'fchip on';
+    chip.style.background = c.color; chip.style.borderColor = c.color; chip.style.color = '#080f1a';
+    renderPlaces(document.getElementById('search-input').value);
+  };
+  fb.appendChild(chip);
+});
+
+// ─── PLACES ───
+const CAT_ORDER = ['hotel','actividad','vista','playa','restaurante','aeropuerto'];
+
+function renderPlaces(query) {
+  const container = document.getElementById('places-list');
+  container.innerHTML = '';
+  const q = (query||'').toLowerCase();
+  const filtered = POINTS.filter(p =>
+    (currentCat==='all' || p.cat===currentCat) &&
+    (p.name.toLowerCase().includes(q) || (p.desc||'').toLowerCase().includes(q))
+  );
+  const grouped = {};
+  filtered.forEach(p => { if(!grouped[p.cat]) grouped[p.cat]=[]; grouped[p.cat].push(p); });
+
+  CAT_ORDER.forEach(cat => {
+    if(!grouped[cat]) return;
+    if(currentCat==='all'){
+      const lbl = document.createElement('div');
+      lbl.className = 'section-label';
+      lbl.textContent = CATS[cat]?.label || cat;
+      container.appendChild(lbl);
+    }
+    grouped[cat].forEach(p => {
+      const photos = getPhotos(p.name);
+      const note = getNote(p.name);
+      const c = CATS[p.cat] || {};
+      const card = document.createElement('div');
+      card.className = 'place-card' + (p.pinned?' pinned':'');
+      card.innerHTML = `
+        <div class="p-icon" style="background:${c.color||'#888'}18;">${c.emoji||'📍'}</div>
+        <div class="p-info">
+          <div class="p-name">${p.name}</div>
+          <div class="p-sub">${p.desc ? p.desc.substring(0,60)+'…' : ''}</div>
+          <div class="p-tags">
+            <span class="p-tag" style="color:${c.color||'#888'};">${c.label||p.cat}</span>
+            ${p.day ? `<span class="p-day-tag">${p.day}</span>` : ''}
+            ${photos.length ? `<span class="p-badge">📷 ${photos.length}</span>` : ''}
+            ${note ? `<span class="p-badge" style="color:var(--t3);">📝</span>` : ''}
+          </div>
+        </div>
+        <div class="p-arrow">›</div>`;
+      card.onclick = () => openSheet(p);
+      container.appendChild(card);
+    });
+  });
+
+  if(!filtered.length){
+    container.innerHTML = '<div style="padding:48px 20px;text-align:center;color:var(--t3);font-size:14px;">Sin resultados</div>';
+  }
+}
+renderPlaces('');
+
+function searchPlaces(v){ renderPlaces(v); }
+
+// ─── SHEET ───
+function openSheet(p) {
+  currentPoint = p;
+  const c = CATS[p.cat] || {};
+
+  // hero image
+  const hw = document.getElementById('sh-hero-wrap');
+  hw.innerHTML = '';
+  if(p.img){
+    const img = document.createElement('img');
+    img.id = 'sh-hero';
+    img.src = p.img;
+    img.alt = p.name;
+    img.onload = () => img.classList.add('loaded');
+    img.onerror = () => { hw.innerHTML = `<div id="sh-hero-placeholder">${c.emoji||'📍'}</div>`; };
+    hw.appendChild(img);
+  } else {
+    hw.innerHTML = `<div id="sh-hero-placeholder">${c.emoji||'📍'}</div>`;
+  }
+
+  // cat + day
+  document.getElementById('sh-cat-label').textContent = c.label || p.cat;
+  document.getElementById('sh-cat-label').style.color = c.color || '#888';
+  const dayBadge = document.getElementById('sh-day-badge');
+  if(p.day){ dayBadge.textContent = p.day; dayBadge.style.display='inline-block'; }
+  else { dayBadge.style.display='none'; }
+
+  document.getElementById('sh-name').textContent = p.name;
+  document.getElementById('sh-desc').textContent = p.desc || '';
+
+  const tipBox = document.getElementById('sh-tip-box');
+  if(p.tip){ tipBox.innerHTML = `<strong>💡 Consejo:</strong> ${p.tip}`; tipBox.style.display='block'; }
+  else { tipBox.style.display='none'; }
+
+  document.getElementById('sh-maps-btn').href = p.maps || '#';
+  document.getElementById('sh-notes-ta').value = getNote(p.name);
+  document.getElementById('sh-save-btn').textContent = 'Guardar nota';
+  document.getElementById('sh-save-btn').className = '';
+
+  renderSheetPhotos(p.name);
+
+  // animate in
+  const bg = document.getElementById('sheet-bg');
+  const panel = document.getElementById('sheet-panel');
+  document.getElementById('sheet').classList.add('on');
+  requestAnimationFrame(() => { bg.classList.add('vis'); panel.classList.add('vis'); });
+}
+
+function closeSheet() {
+  const bg = document.getElementById('sheet-bg');
+  const panel = document.getElementById('sheet-panel');
+  bg.classList.remove('vis'); panel.classList.remove('vis');
+  setTimeout(() => { document.getElementById('sheet').classList.remove('on'); currentPoint=null; renderPlaces(document.getElementById('search-input').value); }, 320);
+}
+
+// ─── NOTES ───
+function saveNote() {
+  if(!currentPoint) return;
+  setNote(currentPoint.name, document.getElementById('sh-notes-ta').value);
+  const btn = document.getElementById('sh-save-btn');
+  btn.textContent = '✓ Guardado'; btn.className = 'ok';
+  setTimeout(() => { btn.textContent='Guardar nota'; btn.className=''; }, 2000);
+}
+
+// ─── PHOTOS ───
+function renderSheetPhotos(name) {
+  const strip = document.getElementById('sh-photos');
+  strip.innerHTML = '';
+  const photos = getPhotos(name);
+  photos.forEach((src, i) => {
+    const img = document.createElement('img');
+    img.className = 'ph-thumb'; img.src = src;
+    img.onclick = () => openViewer(name, i);
+    strip.appendChild(img);
+  });
+  const add = document.createElement('div');
+  add.className = 'ph-add';
+  add.innerHTML = '<div class="ph-add-icon">+</div><div>Añadir foto</div>';
+  add.onclick = () => document.getElementById('photo-input').click();
+  strip.appendChild(add);
+}
+
+function addPhotoFile(file) {
+  if(!file || !currentPoint || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const photos = getPhotos(currentPoint.name);
+    photos.push(ev.target.result);
+    savePhotos(currentPoint.name, photos);
+    renderSheetPhotos(currentPoint.name);
+  };
+  reader.readAsDataURL(file);
+}
+
+function onPhotoUpload(e) {
+  addPhotoFile(e.target.files[0]);
+  e.target.value='';
+}
+
+// ─── DRAG & DROP / PASTE PHOTOS ───
+(() => {
+  const panel = document.getElementById('sheet-panel');
+  let dragCounter = 0;
+  const hasFiles = e => !!(e.dataTransfer && Array.from(e.dataTransfer.types||[]).includes('Files'));
+
+  panel.addEventListener('dragenter', e => {
+    if(!currentPoint || !hasFiles(e)) return;
+    e.preventDefault(); e.stopPropagation();
+    dragCounter++;
+    panel.classList.add('drag-over');
+  });
+  panel.addEventListener('dragover', e => {
+    if(!currentPoint || !hasFiles(e)) return;
+    e.preventDefault(); e.stopPropagation();
+    e.dataTransfer.dropEffect = 'copy';
+  });
+  panel.addEventListener('dragleave', e => {
+    if(!currentPoint) return;
+    e.preventDefault(); e.stopPropagation();
+    dragCounter = Math.max(0, dragCounter - 1);
+    if(dragCounter === 0) panel.classList.remove('drag-over');
+  });
+  panel.addEventListener('drop', e => {
+    if(!currentPoint || !hasFiles(e)) return;
+    e.preventDefault(); e.stopPropagation();
+    dragCounter = 0;
+    panel.classList.remove('drag-over');
+    const file = Array.from(e.dataTransfer.files||[]).find(f => f.type.startsWith('image/'));
+    if(file) addPhotoFile(file);
+  });
+
+  document.addEventListener('paste', e => {
+    if(!currentPoint) return;
+    if(document.activeElement && document.activeElement.id === 'sh-notes-ta') return;
+    const items = e.clipboardData && e.clipboardData.items;
+    if(!items) return;
+    for(const item of items){
+      if(item.type && item.type.startsWith('image/')){
+        const file = item.getAsFile();
+        if(file){ e.preventDefault(); addPhotoFile(file); }
+        break;
+      }
+    }
+  });
+})();
+
+function openViewer(name, i) {
+  viewerMode='place'; viewerName=name; viewerIdx=i;
+  document.getElementById('viewer-img').src = getPhotos(name)[i];
+  document.getElementById('viewer').classList.add('on');
+}
+function closeViewer(){ document.getElementById('viewer').classList.remove('on'); viewerName=null; viewerIdx=-1; }
+function deletePhoto(){
+  if(viewerMode==='doc'){
+    if(viewerIdx<0) return;
+    if(!confirm('¿Eliminar este documento?')) return;
+    const docs = getDocs();
+    docs.splice(viewerIdx,1); saveDocs(docs);
+    closeViewer(); renderDocs();
+    return;
+  }
+  if(!viewerName||viewerIdx<0) return;
+  if(!confirm('¿Eliminar esta foto?')) return;
+  const photos = getPhotos(viewerName);
+  photos.splice(viewerIdx,1); savePhotos(viewerName,photos);
+  closeViewer();
+  if(currentPoint?.name===viewerName) renderSheetPhotos(viewerName);
+}
+
+// ─── VIAJE (DOCUMENTOS) ───
+function renderDocs(){
+  const grid = document.getElementById('doc-grid');
+  const docs = getDocs();
+  grid.innerHTML = '';
+  docs.forEach((d,i) => {
+    const card = document.createElement('div');
+    card.className = 'doc-card';
+    card.innerHTML = `<img src="${d.src}" alt="${d.label||'Documento'}">${d.label?`<div class="doc-label">${d.label}</div>`:''}`;
+    card.onclick = () => openDocViewer(i);
+    grid.appendChild(card);
+  });
+  const add = document.createElement('div');
+  add.className = 'doc-add';
+  add.innerHTML = '<div class="ph-add-icon">+</div><div>Añadir documento</div>';
+  add.onclick = () => document.getElementById('doc-input').click();
+  grid.appendChild(add);
+}
+
+function onDocUpload(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const label = (prompt('Etiqueta (opcional): ej. "Tarjeta embarque ida", "QR barco Keri"...','') || '').trim();
+    const docs = getDocs();
+    docs.push({ id: Date.now(), src: ev.target.result, label });
+    saveDocs(docs);
+    renderDocs();
+  };
+  reader.readAsDataURL(file); e.target.value='';
+}
+
+function openDocViewer(i){
+  const docs = getDocs();
+  if(!docs[i]) return;
+  viewerMode='doc'; viewerIdx=i;
+  document.getElementById('viewer-img').src = docs[i].src;
+  document.getElementById('viewer').classList.add('on');
+}
+
+renderDocs();
+
+// ─── PLAN ───
+function openPoint(name) {
+  const p = POINTS.find(x => x.name === name);
+  if(!p) return;
+  openSheet(p);
+}
+
+function optionsRow(names){
+  const cards = names.map(name => {
+    const op = POINTS.find(x => x.name === name);
+    if(!op) return '';
+    const c = CATS[op.cat] || {};
+    const safe = name.replace(/'/g,"\\'");
+    return `
+      <div class="opt-card" onclick="openPoint('${safe}')">
+        ${op.img ? `<img class="opt-img" src="${op.img}" alt="${op.name}">` : `<div class="opt-img-placeholder">${c.emoji||'🍽️'}</div>`}
+        <div class="opt-body">
+          <div class="opt-name">${op.name}</div>
+          <a class="opt-maps" href="${op.maps||'#'}" target="_blank" onclick="event.stopPropagation()">📍 Maps</a>
+        </div>
+      </div>`;
+  }).join('');
+  return `<div class="opt-label">Opciones — elegid al momento</div><div class="opt-row">${cards}</div>`;
+}
+
+function buildPlan(){
+  const c = document.getElementById('plan-days');
+  PLAN.forEach((d,i) => {
+    const div = document.createElement('div'); div.className='day-card';
+    const bid='db'+i;
+    div.innerHTML = `
+      <div class="day-hdr" onclick="toggleDay('${bid}',this)">
+        <div class="day-dot" style="background:${d.color}20;color:${d.color};">D${d.day}</div>
+        <div class="day-info">
+          <div class="day-date">${d.date}</div>
+          <div class="day-title">${d.title}</div>
+        </div>
+        <div class="day-chev">›</div>
+      </div>
+      <div class="day-body" id="${bid}">
+        ${d.items.map(it=>`
+          <div class="di">
+            <div class="di-time">${it.time||''}</div>
+            <div style="flex:1;">
+              <div class="di-title">${it.title}</div>
+              <div class="di-desc">${it.desc}</div>
+              ${it.tip?`<div class="di-tip">💡 ${it.tip}</div>`:''}
+              ${it.point?`<button onclick="openPoint('${it.point.replace(/'/g,"\\'")}')" style="margin-top:8px;display:inline-flex;align-items:center;gap:5px;padding:6px 11px;background:rgba(42,168,224,0.1);border:0.5px solid rgba(42,168,224,0.3);border-radius:20px;color:var(--sea);font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">📍 ${it.point}</button>`:''}
+              ${it.options?optionsRow(it.options):''}
+            </div>
+          </div>`).join('')}
+      </div>`;
+    c.appendChild(div);
+  });
+}
+buildPlan();
+
+function toggleDay(id,hdr){
+  const b=document.getElementById(id); b.classList.toggle('on');
+  hdr.closest('.day-card').classList.toggle('open', b.classList.contains('on'));
+  hdr.querySelector('.day-chev').style.transform=b.classList.contains('on')?'rotate(90deg)':'';
+}
+
+// ─── NAV ───
+const navBtns = document.querySelectorAll('.nb');
+function showScr(name,idx){
+  document.querySelectorAll('.scr').forEach(s=>{ s.classList.remove('on'); s.classList.remove('enter'); s.classList.remove('enter-active'); });
+  navBtns.forEach(b=>b.classList.remove('on'));
+  const target = document.getElementById('scr-'+name);
+  target.classList.add('on');
+  target.classList.add('enter');
+  navBtns[idx].classList.add('on');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      target.classList.add('enter-active');
+      target.classList.remove('enter');
+    });
+  });
+  setTimeout(() => target.classList.remove('enter-active'), 400);
+}
+</script>
+</body>
+</html>
